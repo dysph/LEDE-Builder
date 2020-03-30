@@ -1,100 +1,86 @@
-#=================================================
-# https://github.com/P3TERX/Actions-OpenWrt
-# Description: Build OpenWrt using GitHub Actions
-# Lisence: MIT
-# Author: P3TERX
-# Blog: https://p3terx.com
-#=================================================
-
 name: Build LEDE
 
 on:
   push:
     branches:
       - master
-    paths:
-      - '.config'
   schedule:
-    - cron: 0 8 * * *
-
-env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
-  CONFIG_FILE: .config
-  UPLOAD_BIN_DIR: false
-  UPLOAD_FIRMWARE: true
-  TZ: Asia/Shanghai
-
+    - cron: 0 8 * * 5
+    
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - name: Checkout
       uses: actions/checkout@master
 
-    - name: Initialization environment
+    - name: Initialize Environment
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo swapoff /swapfile
-        sudo rm -rf /swapfile /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
-        sudo -E apt-get -qq update
-        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler
-        sudo -E apt-get -qq autoremove --purge
-        sudo -E apt-get -qq clean
+        docker rmi `docker images -q`
+        sudo rm -rf \
+          /usr/share/dotnet \
+          /etc/mysql \
+          /etc/php
+        sudo -E apt-get -y purge \
+          azure-cli \
+          ghc* \
+          zulu* \
+          hhvm \
+          llvm* \
+          firefox \
+          google* \
+          dotnet* \
+          powershell \
+          openjdk* \
+          mysql* \
+          php*
+        sudo -E apt-get update
+        sudo -E apt-get install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler
+        sudo -E apt-get autoremove --purge
+        sudo -E apt-get clean
+        df -h
 
-    - name: Clone source code
+    - name: Clone Lean LEDE
+      env: 
+        REPO_URL: https://github.com/coolsnowwolf/lede
+        REPO_BRANCH: master
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
-    - name: Update feeds
+    - name: Update Feeds
       run: cd openwrt && ./scripts/feeds update -a
 
-    - name: Install feeds
+    - name: Install Feeds
       run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
       run: |
-        [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-
-    - name: Download package
-      id: package
-      run: |
-        cd openwrt
+        [ -e .config ] && mv .config openwrt
         make defconfig
-        make download -j8
+
+    - name: Download Package
+      run: |
+        cd openwrt && make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
-    - name: Compile the firmware
-      id: compile
+    - name: Build
       run: |
         cd openwrt
-        echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 V=s
-        echo "::set-output name=status::success"
+        echo -e "$(nproc) thread build."
+        make -j$(nproc) V=s
 
-    - name: Upload bin directory
+    - name: Upload Packages Directory
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
-        name: OpenWrt_bin
-        path: openwrt/bin
+        name: OpenWrt_Packages
+        path: openwrt/bin/packages/
 
-    - name: Organize files
-      id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
-      run: |
-        cd openwrt/bin/targets/*/*
-        rm -rf packages
-        echo "::set-env name=FIRMWARE::$PWD"
-        echo "::set-output name=status::success"
-
-    - name: Upload firmware directory
+    - name: Upload Targets Directory
       uses: actions/upload-artifact@master
-      if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: OpenWrt_firmware
-        path: ${{ env.FIRMWARE }}
+        name: OpenWrt_Firmware
+        path: openwrt/bin/targets/
