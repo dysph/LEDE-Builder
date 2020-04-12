@@ -40,7 +40,7 @@ jobs:
 
     - name: Load custom configuration
       run: |
-        [ -e .config ] && mv .config openwrt
+        [ -e pi.config ] && mv pi.config openwrt/.config
 
     - name: Download Package
       run: |
