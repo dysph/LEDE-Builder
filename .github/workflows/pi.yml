@@ -33,11 +33,7 @@ jobs:
       env: 
         REPO_URL: https://github.com/coolsnowwolf/lede
         REPO_BRANCH: master
-      # run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-      run: |
-        git clone $REPO_URL openwrt
-        cd openwrt
-        git reset --hard ce326f0
+      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: Update Feeds
       run: cd openwrt && ./scripts/feeds update -a && ./scripts/feeds install -a
@@ -53,7 +49,10 @@ jobs:
 
     - name: Build
       run: |
-        cd openwrt && make -j1 V=s
+        # cd openwrt && make -j1 V=s
+        cd openwrt
+        echo -e "$(nproc) thread build."
+        make -j$(nproc) V=s
 
     - name: Space Usage
       run: |
