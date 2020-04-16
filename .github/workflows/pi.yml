@@ -36,7 +36,12 @@ jobs:
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: Update Feeds
-      run: cd openwrt && ./scripts/feeds update -a && ./scripts/feeds install -a
+      run: |
+        cd openwrt
+        sed -i 's/\"#src-git\"/\"src-git\"/g' ./feeds.conf.default
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        cat ./feeds.conf.default
 
     - name: Load Config File
       run: |
