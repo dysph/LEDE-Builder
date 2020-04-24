@@ -1,9 +1,11 @@
 name: Compiler for RPi
 
 on:
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
+    paths:
+      - 'rpi.config'
   schedule:
     - cron: 0 18 * * 5
   watch:
