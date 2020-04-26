@@ -1,11 +1,11 @@
-name: Compiler for RPi
+name: Compiler for K3
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'rpi.config'
+      - 'k3.config'
   # schedule:
   #   - cron: 0 18 * * 5
   # watch:
@@ -51,7 +51,7 @@ jobs:
 
     - name: Load config
       run: |
-        [ -e rpi.config ] && mv rpi.config openwrt/.config
+        [ -e k3.config ] && mv k3.config openwrt/.config
 
     - name: Download package
       run: |
@@ -69,14 +69,8 @@ jobs:
       run: |
         df -h
 
-    # - name: Upload Packages Directory
-    #   uses: actions/upload-artifact@master
-    #   with:
-    #     name: OpenWrt_Packages
-    #     path: openwrt/bin/packages/
-
     - name: Upload firmware
       uses: actions/upload-artifact@master
       with:
-        name: OpenWrt_Firmware
+        name: K3_Firmware
         path: openwrt/bin/targets/
