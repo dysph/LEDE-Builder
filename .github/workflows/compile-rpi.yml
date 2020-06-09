@@ -6,8 +6,8 @@ on:
       - master
     paths:
       - 'rpi.config'
-  schedule:
-    - cron: 0 18 * * 5
+  # schedule:
+  #   - cron: 0 18 * * 5
   watch:
     types: [started]
     
@@ -60,12 +60,12 @@ jobs:
 
     - name: Build
       run: |
-        # cd openwrt && make -j1 V=s
-        cd openwrt
-        echo -e "$(nproc) thread build."
-        make -j$(nproc) V=s
+        cd openwrt && make -j1 V=s
+        # cd openwrt
+        # echo -e "$(nproc) thread build."
+        # make -j$(nproc) V=s
 
-    - name: Space Usage
+    - name: Space usage
       run: |
         df -h
 

@@ -1,11 +1,11 @@
-name: Compiler for K3
+name: Compiler for AC2100
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'k3.config'
+      - 'ac2100.config'
   # schedule:
   #   - cron: 0 18 * * 5
   watch:
@@ -51,7 +51,7 @@ jobs:
 
     - name: Load config
       run: |
-        [ -e k3.config ] && mv k3.config openwrt/.config
+        [ -e ac2100.config ] && mv ac2100.config openwrt/.config
 
     - name: Download package
       run: |
