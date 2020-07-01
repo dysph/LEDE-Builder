@@ -8,8 +8,8 @@ on:
       - 'ac2100.config'
   # schedule:
   #   - cron: 0 18 * * 5
-  watch:
-    types: [started]
+  # watch:
+  #   types: [started]
     
 jobs:
   build:
