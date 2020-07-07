@@ -1,15 +1,15 @@
-name: Compiler for AC2100
+name: Compiler for K3 4.19
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'ac2100.config'
+      - 'k3_4.19.config'
   # schedule:
   #   - cron: 0 18 * * 5
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
     
 jobs:
   build:
@@ -34,8 +34,8 @@ jobs:
 
     - name: Clone lean LEDE
       env: 
-        REPO_URL: https://github.com/coolsnowwolf/lede
-        REPO_BRANCH: master
+        REPO_URL: https://github.com/coolsnowwolf/openwrt.git
+        REPO_BRANCH: lede-17.01
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         df -h
@@ -43,15 +43,15 @@ jobs:
     - name: Update & install feeds
       run: |
         cd openwrt
-        sed -i 's/#src-git/src-git/g' ./feeds.conf.default
+        # sed -i 's/#src-git/src-git/g' ./feeds.conf.default
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-        echo "feeds.conf.default:"
-        cat ./feeds.conf.default
+        # echo "feeds.conf.default:"
+        # cat ./feeds.conf.default
 
     - name: Load config
       run: |
-        [ -e ac2100.config ] && mv ac2100.config openwrt/.config
+        [ -e k3_4.19.config ] && mv k3_4.19.config openwrt/.config
 
     - name: Download package
       run: |
