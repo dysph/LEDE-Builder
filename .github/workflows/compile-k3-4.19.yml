@@ -44,8 +44,8 @@ jobs:
       run: |
         cd openwrt
         # To avoid sqm compile error:
-        sed -i '/sqm/d' ./package/lean/default-settings/Makefile
-        rm ./package/lean/default-settings/i18n/sqm.zh-cn.po
+        # sed -i '/sqm/d' ./package/lean/default-settings/Makefile
+        # rm ./package/lean/default-settings/i18n/sqm.zh-cn.po
         # sed -i 's/#src-git/src-git/g' ./feeds.conf.default
         ./scripts/feeds update -a
         ./scripts/feeds install -a
