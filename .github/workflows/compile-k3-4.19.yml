@@ -77,3 +77,9 @@ jobs:
       with:
         name: Firmware
         path: openwrt/bin/targets/
+
+    - name: Upload package
+      uses: actions/upload-artifact@master
+      with:
+        name: Packages
+        path: openwrt/bin/packages/
