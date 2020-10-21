@@ -70,7 +70,7 @@ jobs:
       run: |
         ls openwrt/bin/targets/bcm53xx/generic/
         sudo mkdir -p /opt/k3/
-        sudo cp openwrt/bin/targets/bcm53xx/generic/*phicomm-k3* /opt/k3/
+        sudo cp openwrt/bin/targets/bcm53xx/generic/*k3* /opt/k3/
         sudo cp openwrt/bin/targets/bcm53xx/generic/*.buildinfo /opt/k3/
         sudo sha256sum /opt/k3/* > /opt/k3/sha256sum.txt
 
@@ -78,7 +78,7 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: K3 Firmware
-        path: opt/k3/
+        path: /opt/k3/
 
     - name: Upload all firmwares
       uses: actions/upload-artifact@master
