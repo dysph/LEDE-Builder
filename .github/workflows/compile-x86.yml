@@ -1,11 +1,11 @@
-name: Compiler for GL.iNet AX1800
+name: Compiler for J4125
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'ax1800.config'
+      - 'x86.config'
   # schedule:
   #   - cron: 0 18 * * 5
   # watch:
@@ -49,7 +49,7 @@ jobs:
 
     - name: Load config
       run: |
-        [ -e ax1800.config ] && mv ax1800.config openwrt/.config
+        [ -e x86.config ] && mv x86.config openwrt/.config
 
     - name: Download package
       run: |
@@ -66,14 +66,14 @@ jobs:
       run: |
         df -h
 
-    - name: Upload all firmwares
+    - name: Upload firmwares
       uses: actions/upload-artifact@master
       with:
-        name: All Firmwares
+        name: Firmwares
         path: openwrt/bin/targets/
 
     - name: Upload package
       uses: actions/upload-artifact@master
       with:
-        name: All Packages
+        name: Packages
         path: openwrt/bin/packages/
