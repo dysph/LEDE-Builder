@@ -46,6 +46,7 @@ jobs:
           echo 'src-git helloworld https://github.com/dysph/helloworld.git;main' >> ./feeds.conf.default
           ./scripts/feeds update -a && ./scripts/feeds install -a
           echo "feeds.conf.default:" && cat ./feeds.conf.default
+          sed -i 's/KERNEL_PATCHVER:=6.1/KERNEL_PATCHVER:=6.6/g' target/linux/x86/Makefile
 
       - name: Load config
         run: |
