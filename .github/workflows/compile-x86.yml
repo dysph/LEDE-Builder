@@ -43,7 +43,8 @@ jobs:
       - name: Update & install feeds
         run: |
           cd openwrt
-          echo 'src-git helloworld https://github.com/fw876/helloworld.git;main' >> ./feeds.conf.default
+          echo 'src-git helloworld https://github.com/fw876/helloworld.git' >> ./feeds.conf.default
+          echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall2' >> ./feeds.conf.default
           ./scripts/feeds update -a && ./scripts/feeds install -a
           echo "feeds.conf.default:" && cat ./feeds.conf.default
 
