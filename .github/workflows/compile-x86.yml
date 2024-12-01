@@ -47,6 +47,9 @@ jobs:
           echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall2' >> ./feeds.conf.default
           ./scripts/feeds update -a && ./scripts/feeds install -a
           echo "feeds.conf.default:" && cat ./feeds.conf.default
+          sed -i 's/KERNEL_PATCHVER:=6.6/KERNEL_PATCHVER:=5.15/' ./target/linux/x86/Makefile
+          sed -i 's/KERNEL_TESTING_PATCHVER:=6.12/KERNEL_TESTING_PATCHVER:=6.1/' ./target/linux/x86/Makefile
+          echo "Makefile:" && cat ./target/linux/x86/Makefile
 
       - name: Load config
         run: |
